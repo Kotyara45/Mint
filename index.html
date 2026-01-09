@@ -1,55 +1,29 @@
-<!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linux Mint WASM</title>
-
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; worker-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
     <script src="coi-serviceworker.js"></script>
-
+    <title>Linux Mint WASM</title>
     <style>
-        /* Стилі для чорного екрана */
-        body { 
-            background: #111; 
-            color: #0f0; 
-            font-family: monospace; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-        }
-        #screen_container { 
-            border: 3px solid #333; 
-            background: #000; 
-            min-width: 640px; 
-            min-height: 400px; 
-        }
+        body { background: #111; color: #0f0; font-family: monospace; text-align: center; margin: 0; padding: 20px; }
+        #screen_container { border: 2px solid #333; background: #000; display: inline-block; width: 640px; height: 400px; }
         canvas { display: block; }
-        .info { margin-top: 10px; color: #666; font-size: 12px; }
     </style>
 </head>
 <body>
-
     <div id="screen_container">
-        <div id="loading_text" style="padding: 20px;">Ініціалізація системи...</div>
+        <div id="status" style="padding: 20px;">Starting system...</div>
         <canvas></canvas>
     </div>
-
-    <div class="info">Якщо бачите помилку CSP — спробуйте браузер Firefox</div>
-
-    <script src="libv86.js"></script>
-
+    <script src="https://copy.sh/v86/build/libv86.js"></script>
     <script>
         window.onload = function() {
             if (typeof V86Starter === "undefined") {
-                document.getElementById("loading_text").innerHTML = "<span style='color:red'>Помилка: libv86.js не завантажено</span>";
+                document.getElementById("status").innerHTML = "CSP Error: Blocked";
                 return;
             }
-
-            const emulator = new V86Starter({
-                wasm_path: "v86.wasm",
+            var emulator = new V86Starter({
+                wasm_path: "https://copy.sh/v86/build/v86.wasm",
                 memory_size: 256 * 1024 * 1024,
                 vga_fps: 30,
                 screen_container: document.getElementById("screen_container"),
@@ -58,9 +32,8 @@
                 cdrom: { url: "linux.iso" },
                 autostart: true,
             });
-
             emulator.add_listener("emulator-ready", function() {
-                document.getElementById("loading_text").style.display = "none";
+                document.getElementById("status").style.display = "none";
             });
         };
     </script>
