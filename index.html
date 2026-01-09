@@ -1,42 +1,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Linux Mint WASM</title>
-    <script src="coi-serviceworker.js"></script>
+    <title>My Linux Mint</title>
     <style>
-        body { background: #111; color: #0f0; font-family: monospace; text-align: center; padding: 20px; }
-        #screen_container { border: 2px solid #333; background: #000; display: inline-block; width: 640px; height: 400px; }
-        canvas { display: block; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
-    <div id="screen_container">
-        <div id="status" style="padding: 20px;">Завантаження локальних файлів...</div>
-        <canvas></canvas>
-    </div>
 
-    <script src="libv86.js"></script>
+    <iframe src="https://copy.sh/v86/?cdrom=https://kotyara45.github.io/Mint/linux.iso"></iframe>
 
-    <script>
-        window.onload = function() {
-            if (typeof V86Starter === "undefined") {
-                document.getElementById("status").innerHTML = "Помилка: libv86.js не знайдено в репозиторії";
-                return;
-            }
-            var emulator = new V86Starter({
-                wasm_path: "v86.wasm",
-                memory_size: 256 * 1024 * 1024,
-                vga_fps: 30,
-                screen_container: document.getElementById("screen_container"),
-                bios: { url: "seabios.bin" },
-                vga_bios: { url: "vgabios.bin" },
-                cdrom: { url: "linux.iso" },
-                autostart: true,
-            });
-            emulator.add_listener("emulator-ready", function() {
-                document.getElementById("status").style.display = "none";
-            });
-        };
-    </script>
 </body>
 </html>
