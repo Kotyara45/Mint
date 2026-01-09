@@ -1,43 +1,68 @@
-<!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:;">
-    <title>Linux WASM Project</title>
+    <title>WASM Linux Mint</title>
+
+    <script src="coi-serviceworker.js"></script>
+
     <style>
-        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        #screen_container { border: 4px solid #333; background: black; display: inline-block; min-width: 640px; min-height: 400px; }
-        canvas { display: none; }
-        .status-msg { margin-top: 10px; color: #888; }
+        body {
+            background-color: #1a1a1a;
+            color: #eee;
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 10px; }
+        #screen_container {
+            margin: 0 auto;
+            background-color: #000;
+            border: 4px solid #444;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: inline-block;
+            min-width: 640px;
+            min-height: 480px;
+        }
+        canvas {
+            display: block; 
+        }
+        #status {
+            margin-top: 10px;
+            color: #aaa;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>WebAssembly Linux Mint (Lite)</h1>
-    
+    <h1>Linux Web Emulation</h1>
+
     <div id="screen_container">
-        <div id="loader" style="padding: 50px;">Завантаження бібліотек...</div>
+        <div style="padding: 100px;">
+            Завантаження системи...<br>
+            (Це може зайняти хвилину)
+        </div>
         <canvas></canvas>
     </div>
 
-    <div class="status-msg">Якщо бачите чорне вікно — почекайте завантаження образу (16МБ)</div>
+    <div id="status">Статус: Ініціалізація...</div>
 
     <script src="libv86.js"></script>
 
     <script>
-        window.onload = function() {
-            const loader = document.getElementById("loader");
+        "use strict";
 
+        window.onload = function() {
             if (typeof V86Starter === "undefined") {
-                loader.innerHTML = "<b style='color:red'>Помилка: libv86.js заблоковано браузером.</b><br>Спробуйте натиснути Ctrl+F5 або відкрити в Chrome.";
+                document.getElementById("status").innerHTML = "ПОМИЛКА: Не знайдено файл libv86.js";
+                document.getElementById("status").style.color = "red";
                 return;
             }
 
-            loader.innerHTML = "Ініціалізація системи... зачекайте.";
-
-            const emulator = new V86Starter({
+            var emulator = new V86Starter({
                 wasm_path: "v86.wasm",
-                memory_size: 512 * 1024 * 1024,
+                memory_size: 256 * 1024 * 1024,
                 vga_fps: 30,
                 screen_container: document.getElementById("screen_container"),
                 bios: { url: "seabios.bin" },
@@ -47,7 +72,15 @@
             });
 
             emulator.add_listener("emulator-ready", function() {
-                loader.style.display = "none";
+                document.getElementById("status").innerHTML = "Статус: Емулятор працює. Завантаження Linux...";
+                document.getElementById("status").style.color = "#0f0";
+            });
+            
+            emulator.add_listener("download-progress", function(e) {
+                var percent = Math.round((e.progress / e.total) * 100);
+                if (!isNaN(percent)) {
+                    document.getElementById("status").innerHTML = "Завантаження образу диска: " + percent + "%";
+                }
             });
         };
     </script>
