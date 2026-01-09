@@ -1,66 +1,54 @@
-<html>
+<!DOCTYPE html>
+<html lang="uk">
 <head>
     <meta charset="utf-8">
-    <title>WASM Linux Mint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Mint WASM</title>
 
     <script src="coi-serviceworker.js"></script>
 
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: #eee;
-            font-family: 'Segoe UI', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
+        /* Стилі для чорного екрана */
+        body { 
+            background: #111; 
+            color: #0f0; 
+            font-family: monospace; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
         }
-        h1 { margin-bottom: 10px; }
-        #screen_container {
-            margin: 0 auto;
-            background-color: #000;
-            border: 4px solid #444;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: inline-block;
-            min-width: 640px;
-            min-height: 480px;
+        #screen_container { 
+            border: 3px solid #333; 
+            background: #000; 
+            min-width: 640px; 
+            min-height: 400px; 
         }
-        canvas {
-            display: block; 
-        }
-        #status {
-            margin-top: 10px;
-            color: #aaa;
-            font-size: 14px;
-        }
+        canvas { display: block; }
+        .info { margin-top: 10px; color: #666; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <h1>Linux Web Emulation</h1>
-
     <div id="screen_container">
-        <div style="padding: 100px;">
-            Завантаження системи...<br>
-            (Це може зайняти хвилину)
-        </div>
+        <div id="loading_text" style="padding: 20px;">Ініціалізація системи...</div>
         <canvas></canvas>
     </div>
 
-    <div id="status">Статус: Ініціалізація...</div>
+    <div class="info">Якщо бачите помилку CSP — спробуйте браузер Firefox</div>
 
     <script src="libv86.js"></script>
 
     <script>
-        "use strict";
-
         window.onload = function() {
             if (typeof V86Starter === "undefined") {
-                document.getElementById("status").innerHTML = "ПОМИЛКА: Не знайдено файл libv86.js";
-                document.getElementById("status").style.color = "red";
+                document.getElementById("loading_text").innerHTML = "<span style='color:red'>Помилка: libv86.js не завантажено</span>";
                 return;
             }
 
-            var emulator = new V86Starter({
+            const emulator = new V86Starter({
                 wasm_path: "v86.wasm",
                 memory_size: 256 * 1024 * 1024,
                 vga_fps: 30,
@@ -72,15 +60,7 @@
             });
 
             emulator.add_listener("emulator-ready", function() {
-                document.getElementById("status").innerHTML = "Статус: Емулятор працює. Завантаження Linux...";
-                document.getElementById("status").style.color = "#0f0";
-            });
-            
-            emulator.add_listener("download-progress", function(e) {
-                var percent = Math.round((e.progress / e.total) * 100);
-                if (!isNaN(percent)) {
-                    document.getElementById("status").innerHTML = "Завантаження образу диска: " + percent + "%";
-                }
+                document.getElementById("loading_text").style.display = "none";
             });
         };
     </script>
