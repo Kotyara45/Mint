@@ -1,29 +1,30 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; worker-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
-    <script src="coi-serviceworker.js"></script>
     <title>Linux Mint WASM</title>
+    <script src="coi-serviceworker.js"></script>
     <style>
-        body { background: #111; color: #0f0; font-family: monospace; text-align: center; margin: 0; padding: 20px; }
+        body { background: #111; color: #0f0; font-family: monospace; text-align: center; padding: 20px; }
         #screen_container { border: 2px solid #333; background: #000; display: inline-block; width: 640px; height: 400px; }
         canvas { display: block; }
     </style>
 </head>
 <body>
     <div id="screen_container">
-        <div id="status" style="padding: 20px;">Starting system...</div>
+        <div id="status" style="padding: 20px;">Завантаження локальних файлів...</div>
         <canvas></canvas>
     </div>
-    <script src="https://copy.sh/v86/build/libv86.js"></script>
+
+    <script src="libv86.js"></script>
+
     <script>
         window.onload = function() {
             if (typeof V86Starter === "undefined") {
-                document.getElementById("status").innerHTML = "CSP Error: Blocked";
+                document.getElementById("status").innerHTML = "Помилка: libv86.js не знайдено в репозиторії";
                 return;
             }
             var emulator = new V86Starter({
-                wasm_path: "https://copy.sh/v86/build/v86.wasm",
+                wasm_path: "v86.wasm",
                 memory_size: 256 * 1024 * 1024,
                 vga_fps: 30,
                 screen_container: document.getElementById("screen_container"),
