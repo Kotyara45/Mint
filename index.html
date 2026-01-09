@@ -1,39 +1,36 @@
-<!doctype html>
 <html>
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:;">
     <meta charset="utf-8">
-    <title>Linux Mint Project</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:;">
+    <title>Linux Mint WASM</title>
 </head>
-<body style="background-color: #1a1a1a; color: #eee; font-family: sans-serif; text-align: center;">
+<body style="background: #222; color: #fff; text-align: center;">
 
-    <h2>Linux Mint</h2>
-    
-    <div id="screen_container" style="display: inline-block; border: 2px solid #555;">
-        <div style="white-space: pre; font-family: monospace; padding: 10px;">Завантаження BIOS...</div>
+    <h2>Запуск системи...</h2>
+    <div id="screen_container" style="display: inline-block; border: 3px solid #00f0ff;">
         <canvas></canvas>
     </div>
-<script src="libv86.js"></script>
 
-<script>
-window.onload = function() {
-    if (typeof V86Starter === "undefined") {
-        console.error("Помилка: libv86.js не завантажився!");
-        document.body.innerHTML += "<h3 style='color:red'>Помилка: Не знайдено файл libv86.js</h3>";
-        return;
-    }
+    <script src="./libv86.js"></script>
 
-    var emulator = new V86Starter({
-        wasm_path: "v86.wasm",
-        memory_size: 512 * 1024 * 1024,
-        vga_fps: 30,
-        screen_container: document.getElementById("screen_container"),
-        bios: { url: "seabios.bin" },
-        vga_bios: { url: "vgabios.bin" },
-        cdrom: { url: "linux.iso" },
-        autostart: true,
-    });
-};
-</script>
+    <script>
+    window.onload = function() {
+        if (typeof V86Starter === "undefined") {
+            document.body.innerHTML += "<h3 style='color:red'>Помилка: libv86.js все ще блокується!</h3>";
+            return;
+        }
+
+        var emulator = new V86Starter({
+            wasm_path: "v86.wasm",
+            memory_size: 256 * 1024 * 1024,
+            vga_fps: 30,
+            screen_container: document.getElementById("screen_container"),
+            bios: { url: "seabios.bin" },
+            vga_bios: { url: "vgabios.bin" },
+            cdrom: { url: "linux.iso" },
+            autostart: true,
+        });
+    };
+    </script>
 </body>
 </html>
