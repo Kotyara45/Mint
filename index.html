@@ -12,21 +12,27 @@
         <div style="white-space: pre; font-family: monospace; padding: 10px;">Завантаження BIOS...</div>
         <canvas></canvas>
     </div>
+<script src="libv86.js"></script>
 
-    <script src="libv86.js"></script>
-    <script>
-    window.onload = function() {
-        var emulator = new V86Starter({
-            wasm_path: "v86.wasm",
-            memory_size: 512 * 1024 * 1024,
-            vga_fps: 30,
-            screen_container: document.getElementById("screen_container"),
-            bios: { url: "seabios.bin" },
-            vga_bios: { url: "vgabios.bin" },
-            cdrom: { url: "linux.iso" },
-            autostart: true,
-        });
-    };
-    </script>
+<script>
+window.onload = function() {
+    if (typeof V86Starter === "undefined") {
+        console.error("Помилка: libv86.js не завантажився!");
+        document.body.innerHTML += "<h3 style='color:red'>Помилка: Не знайдено файл libv86.js</h3>";
+        return;
+    }
+
+    var emulator = new V86Starter({
+        wasm_path: "v86.wasm",
+        memory_size: 512 * 1024 * 1024,
+        vga_fps: 30,
+        screen_container: document.getElementById("screen_container"),
+        bios: { url: "seabios.bin" },
+        vga_bios: { url: "vgabios.bin" },
+        cdrom: { url: "linux.iso" },
+        autostart: true,
+    });
+};
+</script>
 </body>
 </html>
